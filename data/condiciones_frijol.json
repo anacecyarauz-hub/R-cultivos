@@ -1,0 +1,204 @@
+{
+  "version": "1.0",
+  "cultivo_id": "frijol",
+  "nombre": "Frijol común o poroto",
+  "nombre_cientifico": "Phaseolus vulgaris L.",
+  "alcance": "Referencia del MIDA para poroto en Panamá. No representa mediciones de una parcela ni condiciones validadas para toda la provincia de Los Santos.",
+  "fuentes": [
+    {
+      "id": "mida_poroto_2021",
+      "institucion": "Ministerio de Desarrollo Agropecuario de Panamá",
+      "titulo": "Fichas técnicas de leguminosas 2021: poroto IDIAP R-2 y variedad Chileno",
+      "url": "https://mida.gob.pa/wp-content/uploads/2021/08/Ficha-de-leguminosas-2021revisadas-por-el-tecnico-1.pdf",
+      "paginas": [1, 2],
+      "seccion": "Poroto Phaseolus vulgaris",
+      "idioma": "es",
+      "anio_documento": 2021,
+      "fecha_consulta": "2026-11-11"
+    },
+    {
+      "id": "eos_frijol",
+      "institucion": "EOS Data Analytics",
+      "titulo": "Cultivo de frijol: éxito de la siembra a la cosecha",
+      "url": "https://eos.com/es/blog/cultivo-de-frijol/",
+      "idioma": "es",
+      "fecha_consulta": "2026-11-12"
+    }
+  ],
+  "condiciones": [
+    {
+      "id": "temperatura",
+      "nombre": "Temperatura óptima",
+      "minimo": 20,
+      "maximo": 25,
+      "unidad": "°C",
+      "periodo": null,
+      "nota": "Referencia de las fichas de poroto; no aplicar al frijol Vigna.",
+      "fuente_id": "mida_poroto_2021"
+    },
+    {
+      "id": "precipitacion",
+      "nombre": "Precipitación de referencia",
+      "minimo": 400,
+      "maximo": 400,
+      "unidad": "mm",
+      "periodo": "Ciclo completo del cultivo",
+      "nota": "La fuente proporciona un valor único de 400 mm durante todo el período. No es una cantidad mensual ni una dosis de riego.",
+      "fuente_id": "mida_poroto_2021"
+    },
+    {
+      "id": "ph",
+      "nombre": "pH óptimo del suelo",
+      "minimo": 6.0,
+      "maximo": 6.8,
+      "unidad": null,
+      "periodo": null,
+      "nota": null,
+      "fuente_id": "mida_poroto_2021"
+    }
+  ],
+  "suelo": {
+    "texturas": ["Franco", "Franco arcilloso"],
+    "descripcion": "Suelo permeable y con abundante materia orgánica.",
+    "fuente_id": "mida_poroto_2021"
+  },
+  "rotacion": {
+    "evitar_si_previo": ["frijol"],
+    "beneficioso_despues_de": ["maiz", "arroz"],
+    "motivo": "No repetir frijol en el mismo lugar todos los años reduce la acumulación de enfermedades del suelo; rotar con gramíneas equilibra los nutrientes."
+  },
+  "agua_compatibilidad": {
+    "admite_secano": true,
+    "sistemas_recomendados": ["riego_artificial", "lluvia_y_riego"],
+    "sistemas_riego_preferidos": ["goteo"],
+    "descripcion": "El riego por goteo ayuda a reducir las salpicaduras al follaje y mantener la humedad constante durante la floración."
+  },
+  "drenaje": {
+    "descripcion": "EOS también destaca que el suelo esté bien drenado.",
+    "consideraciones": [
+      "La referencia corresponde a Phaseolus vulgaris, no al frijol Vigna.",
+      "El análisis de suelo y agua ayuda a orientar el manejo del riego."
+    ],
+    "fuente_id": "mida_poroto_2021",
+    "descripcion_fuente_id": "eos_frijol"
+  },
+  "observaciones": [
+    {
+      "id": "identificacion",
+      "descripcion": "Esta ficha corresponde a frijol común o poroto. El frijol Vigna es otra especie y tiene requerimientos diferentes.",
+      "fuente_id": "mida_poroto_2021"
+    },
+    {
+      "id": "analisis",
+      "descripcion": "Realizar análisis físico-químicos de suelo y agua para orientar el plan de nutrición y riego.",
+      "fuente_id": "mida_poroto_2021"
+    }
+  ],
+  "guia_practica": [
+    "Siembra en tierra suelta que deje pasar el agua y tenga materia orgánica; evita los charcos.",
+    "Mantén la tierra con humedad, sobre todo cuando la planta florece. El riego por goteo ayuda a no mojar mucho las hojas.",
+    "Después de arroz, maíz o caña, el frijol ayuda a recuperar nitrógeno. No lo siembres en el mismo sitio todos los años."
+  ],
+  "epoca_siembra": "Como orientación general, siembra en postrera (al final de las lluvias), cuando el suelo aún tenga humedad pero no esté encharcado. Confirma la fecha local con el MIDA.",
+  "apartados": [
+    {
+      "id": "temperatura",
+      "nombre": "Temperatura",
+      "elementos": [
+        {
+          "tipo": "condicion",
+          "condicion_id": "temperatura"
+        },
+        {
+          "tipo": "observacion",
+          "observacion_id": "identificacion"
+        }
+      ]
+    },
+    {
+      "id": "suelo_ph",
+      "nombre": "Suelo y pH",
+      "elementos": [
+        {
+          "tipo": "suelo"
+        },
+        {
+          "tipo": "condicion",
+          "condicion_id": "ph"
+        },
+        {
+          "tipo": "texto",
+          "texto": "EOS presenta un rango general de pH de 6–7.",
+          "fuente_id": "eos_frijol"
+        },
+        {
+          "tipo": "observacion",
+          "observacion_id": "analisis"
+        }
+      ]
+    },
+    {
+      "id": "agua",
+      "nombre": "Agua",
+      "elementos": [
+        {
+          "tipo": "condicion",
+          "condicion_id": "precipitacion"
+        },
+        {
+          "tipo": "texto",
+          "texto": "EOS menciona 25 mm semanales como referencia general. El período semanal y la precipitación por ciclo son conceptos diferentes: no se suman ni constituyen dosis automáticas de riego.",
+          "fuente_id": "eos_frijol"
+        },
+        {
+          "tipo": "texto",
+          "texto": "EOS destaca la importancia de mantener el suministro de agua durante la floración.",
+          "fuente_id": "eos_frijol"
+        }
+      ]
+    },
+    {
+      "id": "luz_solar",
+      "nombre": "Luz solar",
+      "elementos": [
+        {
+          "tipo": "texto",
+          "texto": "EOS menciona al menos 6 horas diarias de exposición solar; estas horas no representan una medida de energía de radiación.",
+          "fuente_id": "eos_frijol"
+        }
+      ]
+    },
+    {
+      "id": "drenaje",
+      "nombre": "Drenaje",
+      "elementos": [
+        {
+          "tipo": "drenaje"
+        }
+      ]
+    },
+    {
+      "id": "riego",
+      "nombre": "Riego",
+      "elementos": [
+        {
+          "tipo": "texto",
+          "texto": "EOS propone el riego por goteo para reducir las salpicaduras al follaje; es una orientación, no un sistema obligatorio.",
+          "fuente_id": "eos_frijol"
+        }
+      ]
+    },
+    {
+      "id": "rotacion",
+      "nombre": "Rotación",
+      "elementos": [
+        {
+          "tipo": "texto",
+          "texto": "EOS aconseja no repetir frijol en el mismo lugar todos los años para reducir la acumulación de enfermedades del suelo. No se determina automáticamente qué cultivo sembrar después.",
+          "fuente_id": "eos_frijol"
+        }
+      ]
+    }
+  ],
+  "aviso": "Son referencias técnicas, no garantías de cosecha. Antes de planificar la siembra, identificar la especie y variedad y evaluar las condiciones de la parcela."
+}

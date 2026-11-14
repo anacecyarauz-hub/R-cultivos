@@ -1,0 +1,112 @@
+{
+  "version": "1.0",
+  "cultivo_id": "cana_azucar",
+  "nombre": "Caña de azúcar",
+  "nombre_cientifico": "Saccharum officinarum L.",
+  "alcance": "Referencia de una guía técnica elaborada en Paraguay. No representa mediciones ni una validación agronómica para toda la provincia de Los Santos.",
+  "fuentes": [
+    {
+      "id": "una_jica_cana_2019",
+      "institucion": "Facultad de Ciencias Agrarias, Universidad Nacional de Asunción",
+      "titulo": "Guía técnica: cultivo de caña de azúcar",
+      "url": "https://www.jica.go.jp/spanish/overseas/paraguay/others/__icsFiles/afieldfile/2025/01/06/gt_01.pdf",
+      "paginas": [18, 19],
+      "tipo_paginacion": "Numeración impresa del documento",
+      "idioma": "es",
+      "anio_documento": 2019,
+      "fecha_consulta": "2026-11-11"
+    }
+  ],
+  "condiciones": [
+    {
+      "id": "temperatura_germinacion",
+      "nombre": "Temperatura óptima de germinación y desarrollo de raíces",
+      "minimo": 26,
+      "maximo": 33,
+      "unidad": "°C",
+      "periodo": "Germinación y desarrollo radicular",
+      "nota": "Rango indicado por esta guía.",
+      "fuente_id": "una_jica_cana_2019"
+    },
+    {
+      "id": "temperatura_crecimiento",
+      "nombre": "Temperatura óptima de crecimiento",
+      "minimo": 30,
+      "maximo": 34,
+      "unidad": "°C",
+      "periodo": "Crecimiento",
+      "nota": "No aplicar este rango a todas las etapas del cultivo.",
+      "fuente_id": "una_jica_cana_2019"
+    },
+    {
+      "id": "precipitacion",
+      "nombre": "Precipitación anual de referencia",
+      "minimo": 1200,
+      "maximo": 1500,
+      "unidad": "mm",
+      "periodo": "Un año",
+      "nota": "Referencia de precipitación de esta guía. No equivale a una dosis de riego ni al consumo total de agua por ciclo.",
+      "fuente_id": "una_jica_cana_2019"
+    }
+  ],
+  "factores_climaticos": [
+    {
+      "id": "radiacion_solar",
+      "nombre": "Luz solar",
+      "descripcion": "Una buena disponibilidad de luz favorece la formación de tallos y el crecimiento.",
+      "valor_numerico": null,
+      "unidad": null,
+      "fuente_id": "una_jica_cana_2019"
+    },
+    {
+      "id": "maduracion",
+      "nombre": "Condiciones de maduración",
+      "descripcion": "Temperaturas relativamente más bajas favorecen la acumulación de sacarosa mientras disminuye el crecimiento.",
+      "valor_numerico": null,
+      "unidad": null,
+      "fuente_id": "una_jica_cana_2019"
+    }
+  ],
+  "suelo": {
+    "texturas": ["Franco-areno-arcilloso"],
+    "descripcion": "Suelo con estructura que permita almacenar agua y facilite su infiltración.",
+    "fuente_id": "una_jica_cana_2019"
+  },
+  "rotacion": {
+    "evitar_si_previo": [],
+    "beneficioso_despues_de": ["frijol"],
+    "motivo": "Se beneficia de una adecuada preparación del suelo y de rotaciones que mantengan la fertilidad."
+  },
+  "agua_compatibilidad": {
+    "admite_secano": true,
+    "sistemas_recomendados": ["riego_artificial", "lluvia_y_riego"],
+    "descripcion": "Demanda buena disponibilidad hídrica en fase de crecimiento y menores aportes durante la maduración."
+  },
+  "drenaje": {
+    "descripcion": "La guía recomienda suelos profundos con buen drenaje natural.",
+    "consideraciones": [
+      "El suelo debe combinar capacidad para almacenar agua con una infiltración adecuada.",
+      "Buen drenaje no significa dejar el suelo sin la humedad que necesita el cultivo."
+    ],
+    "fuente_id": "una_jica_cana_2019"
+  },
+  "observaciones": [
+    {
+      "id": "agua_crecimiento",
+      "descripcion": "La falta de agua durante el crecimiento principal puede disminuir el rendimiento.",
+      "fuente_id": "una_jica_cana_2019"
+    },
+    {
+      "id": "agua_maduracion",
+      "descripcion": "Durante la maduración disminuye la necesidad de agua.",
+      "fuente_id": "una_jica_cana_2019"
+    }
+  ],
+  "guia_practica": [
+    "Busca un suelo profundo que guarde humedad y deje salir el exceso de agua.",
+    "Procura que tenga agua durante el crecimiento; cuando madure, necesita menos.",
+    "La caña puede quedarse de 3 a 5 años. Planifica renovar por partes y descansar la tierra; el frijol puede ayudar a recuperar nutrientes."
+  ],
+  "epoca_siembra": "Como orientación general, planta al inicio de las lluvias, cuando la tierra ya tenga humedad. Confirma la fecha de renovación con el MIDA de tu zona.",
+  "aviso": "Son referencias técnicas de una guía, no garantías de cosecha. La variedad, el suelo, la duración del ciclo y las condiciones locales deben evaluarse antes de planificar el manejo."
+}

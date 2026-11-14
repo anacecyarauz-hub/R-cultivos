@@ -1,0 +1,123 @@
+{
+  "version": "1.0",
+  "cultivo_id": "frijol",
+  "nombre": "Frijol común o poroto",
+  "nombre_cientifico": "Phaseolus vulgaris L.",
+  "alcance": "Información complementaria de dos fuentes con contextos diferentes. No constituye una recomendación validada para una parcela.",
+  "fuentes": [
+    {
+      "id": "mida_poroto_2021",
+      "institucion": "Ministerio de Desarrollo Agropecuario de Panamá",
+      "titulo": "Fichas técnicas de leguminosas 2021: poroto",
+      "tipo": "Ficha técnica oficial",
+      "url": "https://mida.gob.pa/wp-content/uploads/2021/08/Ficha-de-leguminosas-2021revisadas-por-el-tecnico-1.pdf",
+      "paginas": [1, 2],
+      "idioma": "es",
+      "anio_documento": 2021,
+      "fecha_consulta": "2026-11-12"
+    },
+    {
+      "id": "eos_frijol",
+      "institucion": "EOS Data Analytics",
+      "titulo": "Cultivo de frijol: éxito de la siembra a la cosecha",
+      "tipo": "Artículo divulgativo comercial",
+      "url": "https://eos.com/es/blog/cultivo-de-frijol/",
+      "idioma": "es",
+      "fecha_mostrada": "2026-04-20",
+      "fecha_consulta": "2026-11-12"
+    }
+  ],
+  "datos_por_fuente": [
+    {
+      "id": "temperatura_mida",
+      "variable": "temperatura",
+      "minimo": 20,
+      "maximo": 25,
+      "unidad": "°C",
+      "periodo": null,
+      "contexto": "Rango óptimo indicado para las variedades de poroto de las páginas citadas.",
+      "fuente_id": "mida_poroto_2021",
+      "habilitado_comparacion": false
+    },
+    {
+      "id": "ph_mida",
+      "variable": "ph",
+      "minimo": 6.0,
+      "maximo": 6.8,
+      "unidad": null,
+      "periodo": null,
+      "contexto": "Referencia de las fichas de poroto.",
+      "fuente_id": "mida_poroto_2021",
+      "habilitado_comparacion": false
+    },
+    {
+      "id": "ph_eos",
+      "variable": "ph",
+      "minimo": 6,
+      "maximo": 7,
+      "unidad": null,
+      "periodo": null,
+      "contexto": "Rango general indicado en el artículo.",
+      "fuente_id": "eos_frijol",
+      "habilitado_comparacion": false
+    },
+    {
+      "id": "precipitacion_mida",
+      "variable": "precipitacion",
+      "valor": 400,
+      "unidad": "mm",
+      "periodo": "Ciclo completo",
+      "contexto": "Precipitación de referencia; no equivale a una dosis de riego.",
+      "fuente_id": "mida_poroto_2021",
+      "habilitado_comparacion": false
+    },
+    {
+      "id": "agua_eos",
+      "variable": "aporte_agua",
+      "valor": 25,
+      "unidad": "mm",
+      "periodo": "Semana",
+      "contexto": "Conversión de los 2.5 cm semanales mencionados por EOS. Referencia general, no dosis automática.",
+      "fuente_id": "eos_frijol",
+      "habilitado_comparacion": false
+    },
+    {
+      "id": "luz_eos",
+      "variable": "exposicion_solar",
+      "minimo": 6,
+      "maximo": null,
+      "unidad": "horas/día",
+      "periodo": "Día",
+      "contexto": "Horas de exposición solar; no es una medición de energía de radiación.",
+      "fuente_id": "eos_frijol",
+      "habilitado_comparacion": false
+    }
+  ],
+  "observaciones": [
+    {
+      "tema": "suelo",
+      "texto": "MIDA señala suelo permeable y con materia orgánica; EOS también destaca el drenaje.",
+      "fuente_ids": ["mida_poroto_2021", "eos_frijol"]
+    },
+    {
+      "tema": "riego",
+      "texto": "EOS destaca la disponibilidad de agua durante la floración y propone goteo para reducir salpicaduras al follaje.",
+      "fuente_ids": ["eos_frijol"]
+    },
+    {
+      "tema": "rotacion",
+      "texto": "EOS aconseja evitar repetir frijol en el mismo lugar todos los años por la acumulación de enfermedades del suelo.",
+      "fuente_ids": ["eos_frijol"]
+    }
+  ],
+  "criterios_integracion": [
+    "Conservar cada valor con su fuente y contexto.",
+    "No promediar ni fusionar los dos rangos de pH.",
+    "No sumar ni equiparar agua semanal y precipitación por ciclo.",
+    "No convertir consejos generales de rotación en una clasificación automática del próximo cultivo.",
+    "No trasladar calendarios de primavera o heladas a Los Santos.",
+    "No incorporar dosis de fertilizantes, pesticidas ni promesas de cosecha garantizada."
+  ],
+  "estado": "Documento complementario pendiente de integración",
+  "aviso": "Identificar especie, variedad y condiciones locales antes de utilizar estos datos para tomar decisiones."
+}

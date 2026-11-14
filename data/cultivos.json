@@ -1,0 +1,25 @@
+{
+  "version": "1.0",
+  "cultivos": [
+    {
+      "id": "maiz",
+      "nombre": "Maíz",
+      "descripcion": "Información de clima, suelo y manejo del agua."
+    },
+    {
+      "id": "arroz",
+      "nombre": "Arroz",
+      "descripcion": "Información de clima, suelo y manejo del agua."
+    },
+    {
+      "id": "cana_azucar",
+      "nombre": "Caña de azúcar",
+      "descripcion": "Información de clima, suelo y manejo del agua."
+    },
+    {
+      "id": "frijol",
+      "nombre": "Frijol",
+      "descripcion": "Información de clima, suelo y manejo del agua."
+    }
+  ]
+}

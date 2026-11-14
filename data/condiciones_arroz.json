@@ -1,0 +1,127 @@
+{
+  "version": "1.0",
+  "cultivo_id": "arroz",
+  "nombre": "Arroz",
+  "nombre_cientifico": "Oryza sativa L.",
+  "alcance": "Referencia agronómica general; no representa mediciones ni validaciones de una parcela de Los Santos.",
+  "fuentes": [
+    {
+      "id": "fao_arroz_clima",
+      "institucion": "Organización de las Naciones Unidas para la Alimentación y la Agricultura (FAO)",
+      "titulo": "Problemas y limitaciones de la producción de arroz",
+      "url": "https://www.fao.org/4/y2778s/y2778s04.htm",
+      "seccion": "Clima: cuadro 3, temperatura, radiación solar y viento; Suelo: erosión y toxicidad de hierro",
+      "idioma": "es",
+      "fecha_publicacion": null,
+      "fecha_consulta": "2026-11-11"
+    }
+  ],
+  "condiciones": [
+    {
+      "id": "temperatura_germinacion",
+      "nombre": "Temperatura óptima de germinación",
+      "minimo": 20,
+      "maximo": 35,
+      "unidad": "°C",
+      "periodo": "Germinación",
+      "nota": null,
+      "fuente_id": "fao_arroz_clima"
+    },
+    {
+      "id": "temperatura_emergencia",
+      "nombre": "Temperatura óptima de emergencia",
+      "minimo": 25,
+      "maximo": 30,
+      "unidad": "°C",
+      "periodo": "Emergencia de la plántula",
+      "nota": "Valores del cuadro 3 de la fuente.",
+      "fuente_id": "fao_arroz_clima"
+    },
+    {
+      "id": "temperatura_enraizamiento",
+      "nombre": "Temperatura óptima de enraizamiento",
+      "minimo": 25,
+      "maximo": 28,
+      "unidad": "°C",
+      "periodo": "Enraizamiento",
+      "nota": null,
+      "fuente_id": "fao_arroz_clima"
+    },
+    {
+      "id": "temperatura_macollaje",
+      "nombre": "Temperatura óptima de macollaje",
+      "minimo": 25,
+      "maximo": 31,
+      "unidad": "°C",
+      "periodo": "Formación de nuevos tallos",
+      "nota": null,
+      "fuente_id": "fao_arroz_clima"
+    },
+    {
+      "id": "temperatura_grano",
+      "nombre": "Temperatura óptima para el grano",
+      "minimo": 20,
+      "maximo": 25,
+      "unidad": "°C",
+      "periodo": "Llenado y maduración del grano",
+      "nota": null,
+      "fuente_id": "fao_arroz_clima"
+    }
+  ],
+  "factores_climaticos": [
+    {
+      "id": "radiacion_solar",
+      "nombre": "Radiación solar",
+      "descripcion": "La buena iluminación favorece el rendimiento, especialmente durante la reproducción y la maduración.",
+      "valor_numerico": null,
+      "unidad": null,
+      "fuente_id": "fao_arroz_clima"
+    },
+    {
+      "id": "viento",
+      "nombre": "Viento",
+      "descripcion": "Los vientos fuertes pueden tumbar las plantas. Las variedades bajas y de tallos resistentes ayudan a reducir este riesgo.",
+      "valor_numerico": null,
+      "unidad": null,
+      "fuente_id": "fao_arroz_clima"
+    }
+  ],
+  "suelo": {
+    "texturas": ["Franco", "Franco arcilloso", "Arcilloso"],
+    "descripcion": "Suelos con capacidad de retención de humedad adecuados para soportar condiciones de anegamiento o humedad constante.",
+    "fuente_id": "fao_arroz_clima"
+  },
+  "rotacion": {
+    "evitar_si_previo": [],
+    "beneficioso_despues_de": ["frijol"],
+    "motivo": "La rotación con leguminosas contribuye a mejorar la disponibilidad de nitrógeno en el suelo."
+  },
+  "agua_compatibilidad": {
+    "admite_secano": true,
+    "sistemas_recomendados": ["riego_artificial", "lluvia_y_riego"],
+    "descripcion": "El manejo del agua contempla tanto sistemas de secano como riego controlado por láminas de agua."
+  },
+  "observaciones": [
+    {
+      "id": "fase_reproductiva",
+      "descripcion": "Durante la fase reproductiva, el estrés térmico de 35 °C o más puede causar esterilidad de las espiguillas.",
+      "fuente_id": "fao_arroz_clima"
+    }
+  ],
+  "drenaje": {
+    "descripcion": "El manejo del agua debe distinguir entre arroz de secano y arroz bajo riego.",
+    "consideraciones": [
+      "En secano es importante controlar la escorrentía y la erosión.",
+      "En arroz bajo riego se necesita controlar la entrada y salida del agua; una inundación controlada no equivale a una inundación sin control.",
+      "El mal drenaje puede favorecer problemas de toxicidad por hierro en determinados suelos."
+    ],
+    "fuente_id": "fao_arroz_clima"
+  },
+  "guia_practica": [
+    "Decide si sembrarás arroz de secano o con riego; el manejo del agua cambia.",
+    "Con riego, controla la entrada y salida del agua. No dejes el terreno inundado sin control.",
+    "En secano, cuida que la lluvia no arrastre la tierra y mantén la humedad que necesita el cultivo."
+  ],
+  "epoca_siembra": "Al inicio de las lluvias si sembrarás de secano. Con riego controlado, la fecha depende de cuándo tengas agua suficiente.",
+  "aviso": "Las condiciones favorables cambian según la etapa y la variedad. Estos datos no garantizan una cosecha ni permiten diagnosticar una parcela."
+}

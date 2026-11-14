@@ -1,0 +1,90 @@
+{
+  "version": "1.0",
+  "cultivo_id": "maiz",
+  "nombre": "Maíz",
+  "nombre_cientifico": "Zea mays L.",
+  "alcance": "Referencia técnica de Panamá; no representa mediciones de una parcela.",
+  "fuentes": [
+    {
+      "id": "mida_maiz_2019",
+      "institucion": "Ministerio de Desarrollo Agropecuario de Panamá",
+      "titulo": "Ficha técnica del cultivo de maíz mecanizado - 2019",
+      "url": "https://mida.gob.pa/wp-content/uploads/2020/05/Cultivo-maiz.pdf",
+      "pagina": 1
+    },
+    {
+      "id": "fao_maiz_agua",
+      "institucion": "Organización de las Naciones Unidas para la Alimentación y la Agricultura (FAO)",
+      "titulo": "El maíz en los trópicos: manejo integrado de cultivos y manejo del agua",
+      "url": "https://www.fao.org/4/x7650s/x7650s22.htm",
+      "idioma": "es",
+      "fecha_consulta": "2026-11-11"
+    }
+  ],
+  "condiciones": [
+    {
+      "id": "temperatura",
+      "nombre": "Temperatura óptima",
+      "minimo": 18,
+      "maximo": 32,
+      "unidad": "°C",
+      "periodo": null,
+      "nota": "Rango general de referencia; no es un umbral para diagnosticar una parcela.",
+      "fuente_id": "mida_maiz_2019"
+    },
+    {
+      "id": "precipitacion",
+      "nombre": "Precipitación durante el ciclo",
+      "minimo": 600,
+      "maximo": 750,
+      "unidad": "mm",
+      "periodo": "Ciclo completo del cultivo",
+      "nota": "Agua bien distribuida durante el ciclo. No es una cantidad mensual.",
+      "fuente_id": "mida_maiz_2019"
+    },
+    {
+      "id": "ph",
+      "nombre": "pH del suelo",
+      "minimo": 5.5,
+      "maximo": 7.0,
+      "unidad": null,
+      "periodo": null,
+      "nota": null,
+      "fuente_id": "mida_maiz_2019"
+    }
+  ],
+  "suelo": {
+    "texturas": ["Franco", "Franco-arenoso", "Franco arcilloso"],
+    "descripcion": "Suelos profundos, fértiles y bien drenados que faciliten el desarrollo radicular.",
+    "fuente_id": "mida_maiz_2019"
+  },
+  "rotacion": {
+    "evitar_si_previo": ["maiz"],
+    "beneficioso_despues_de": ["frijol"],
+    "motivo": "La rotación con leguminosas como el frijol aporta nitrógeno al suelo y ayuda a romper ciclos de plagas y enfermedades del maíz."
+  },
+  "agua_compatibilidad": {
+    "admite_secano": true,
+    "sistemas_recomendados": ["riego_artificial", "lluvia_y_riego"],
+    "descripcion": "Requiere riego complementario en época seca y buena distribución del agua durante el ciclo."
+  },
+  "manejo": {
+    "epoca_seca": "Requiere riego.",
+    "fuente_id": "mida_maiz_2019"
+  },
+  "drenaje": {
+    "descripcion": "El suelo debe permitir la salida del exceso de agua y evitar el encharcamiento prolongado.",
+    "consideraciones": [
+      "La compactación puede dificultar el paso del agua hacia las capas inferiores.",
+      "La inundación puede perjudicar el desarrollo y el rendimiento del maíz."
+    ],
+    "fuente_id": "fao_maiz_agua"
+  },
+  "guia_practica": [
+    "Prepara un suelo profundo y fértil donde el agua pueda salir; evita los charcos por mucho tiempo.",
+    "En época seca, asegúrate de tener riego y reparte el agua durante el crecimiento.",
+    "Después del maíz, alterna con frijol para ayudar a la tierra y reducir plagas."
+  ],
+  "epoca_siembra": "Al inicio de las lluvias. En época seca, siembra solo si cuentas con riego suficiente.",
+  "aviso": "Estas referencias no garantizan una buena cosecha. También influyen la variedad, el suelo, el agua y el manejo."
+}

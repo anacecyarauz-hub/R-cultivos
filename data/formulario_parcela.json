@@ -1,0 +1,111 @@
+{
+  "version": "1.0",
+  "titulo": "Cuéntanos sobre tu parcela",
+  "descripcion": "Registra lo que conoces sobre el suelo, el agua y los cultivos anteriores de esta parcela. Puedes dejar sin informar lo que no sepas.",
+  "etiquetas": {
+    "cultivo_deseado": "Cultivo que desea plantar",
+    "evaluar_cuatro": "Quiero evaluar las cuatro opciones",
+    "tipo_suelo": "Tipo de suelo",
+    "temperatura": "Temperatura promedio",
+    "temperatura_desconocida": "No lo sé",
+    "periodo_temperatura": "¿De qué período es este promedio?",
+    "abastecimiento_agua": "Cómo recibe agua la parcela",
+    "sistemas_riego": "Sistemas de riego que existen en la parcela",
+    "cultivo_previo": "¿Se ha cultivado antes esta parcela?",
+    "numero_ciclos": "¿Cuántos ciclos de cultivo se han realizado?",
+    "ciclos_desconocidos": "No lo sé",
+    "historial_cultivos": "Cultivos anteriores, del más reciente al más antiguo",
+    "otro_cultivo": "Otro cultivo",
+    "nombre_otro_cultivo": "Nombre del otro cultivo"
+  },
+  "ayudas": {
+    "temperatura": "Introduce un promedio, no la temperatura máxima de un día",
+    "numero_ciclos": "Un ciclo comprende desde la siembra hasta la cosecha; no equivale al número de años",
+    "historial_cultivos": "Registra los ciclos que recuerdes; no es necesario completar todo el historial"
+  },
+  "comparacion": {
+    "titulo": "¿Cómo le va a cada cultivo?",
+    "resultado_general": "Revisamos el clima, el suelo, el agua y lo que se sembró antes. Abre cada cultivo para ver el consejo.",
+    "encabezados": {
+      "factor": "Factor",
+      "dato_usuario": "Lo que indicaste",
+      "referencia": "Lo recomendado",
+      "resultado": "Resultado",
+      "fuente": "Fuente y enlace"
+    },
+    "etiquetas": {
+      "unidad": "Unidad",
+      "etapa_periodo": "Etapa o período",
+      "periodo_usuario": "Período que indicaste",
+      "sistemas_riego": "Sistemas de riego"
+    },
+    "estados": {
+      "dentro": "Va bien",
+      "fuera": "Ojo con esto",
+      "sin_informacion": "Falta un dato",
+      "requiere_contexto": "Hay que revisar la etapa"
+    },
+    "mensajes": {
+      "no_informado": "No lo indicaste",
+      "unidad_no_aplica": "No aplica",
+      "periodo_no_especificado": "No sabemos la etapa",
+      "sin_referencia_estructurada": "No tenemos una recomendación para este dato. Eso no quiere decir que el cultivo no sirva.",
+      "sin_fuente_estructurada": "No encontramos una fuente para este dato.",
+      "temperatura_dentro": "¡Bien! La temperatura está dentro de lo recomendado.",
+      "temperatura_fuera": "Ojo: la temperatura está fuera de lo recomendado.",
+      "temperatura_etapa_dentro": "El promedio cae en el rango de esta etapa, pero no sabemos si corresponde a esa etapa.",
+      "temperatura_etapa_fuera": "Ojo: el promedio no cae en el rango de esta etapa. No sabemos cómo estuvo entonces.",
+      "temperatura_etapa_requiere_contexto": "Este rango es de una etapa específica; el promedio no nos dice cómo estuvo entonces.",
+      "temperatura_sin_dato": "No indicaste la temperatura, así que no podemos revisarla.",
+      "textura_dentro": "¡Bien! Este suelo coincide con los recomendados.",
+      "textura_fuera": "Ojo: este suelo no está entre los recomendados.",
+      "textura_sin_dato": "No indicaste el tipo de suelo, así que no podemos revisarlo.",
+      "datos_no_evaluados_titulo": "Otros datos por revisar"
+    },
+    "factores_no_evaluados": [
+      {
+        "id": "drenaje",
+        "nombre": "Drenaje",
+        "motivo": "No medimos el drenaje de la parcela. Revisa si el agua se acumula o sale con facilidad."
+      }
+    ]
+  },
+  "mensajes_validacion": {
+    "cultivo_deseado_requerido": "Selecciona un cultivo o «Quiero evaluar las cuatro opciones».",
+    "temperatura": "Introduce una temperatura numérica finita o marca «No lo sé».",
+    "ciclos_requeridos": "Introduce el total de ciclos o marca «No lo sé».",
+    "numero_ciclos": "Introduce un entero de 1 o más, o marca «No lo sé».",
+    "cultivo_deseado": "El cultivo seleccionado no pertenece al catálogo disponible.",
+    "tipo_suelo": "El tipo de suelo seleccionado no es válido.",
+    "periodo_temperatura": "El período seleccionado no es válido.",
+    "abastecimiento_agua": "La opción de abastecimiento de agua no es válida.",
+    "sistemas_riego": "Uno o más sistemas de riego no pertenecen al catálogo disponible.",
+    "historial_cultivos": "Revisa los cultivos anteriores y sus nombres.",
+    "historial_supera_ciclos": "El historial no puede incluir más registros que el total de ciclos conocido."
+  },
+  "tipos_suelo": [
+    { "id": "arenoso", "nombre": "Arenoso" },
+    { "id": "franco", "nombre": "Franco" },
+    { "id": "arcilloso", "nombre": "Arcilloso" },
+    { "id": "franco_arenoso", "nombre": "Franco arenoso" },
+    { "id": "franco_arcilloso", "nombre": "Franco arcilloso" },
+    { "id": "otro", "nombre": "Otro" },
+    { "id": "desconocido", "nombre": "No lo sé" }
+  ],
+  "periodos_temperatura": [
+    { "id": "ultimo_mes", "nombre": "Último mes" },
+    { "id": "otro_periodo", "nombre": "Otro período" },
+    { "id": "desconocido", "nombre": "No lo sé" }
+  ],
+  "abastecimientos_agua": [
+    { "id": "solo_lluvia", "nombre": "Solo lluvia" },
+    { "id": "riego_artificial", "nombre": "Riego artificial" },
+    { "id": "lluvia_y_riego", "nombre": "Lluvia y riego" },
+    { "id": "desconocido", "nombre": "No lo sé" }
+  ],
+  "historial_opciones": {
+    "fuente_cultivos": "data/cultivos.json",
+    "otro_cultivo": { "id": null, "nombre": "Otro cultivo" }
+  },
+  "fuente_sistemas_riego": "data/sistemas_riego.json"
+}
