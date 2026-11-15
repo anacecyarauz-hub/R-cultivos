@@ -1,0 +1,16 @@
+{
+  "sistemas_riego": [
+    {
+      "id": "goteo",
+      "nombre": "Riego por goteo"
+    },
+    {
+      "id": "aspersion",
+      "nombre": "Riego por aspersión"
+    },
+    {
+      "id": "gravedad",
+      "nombre": "Riego por gravedad / surcos"
+    }
+  ]
+}
