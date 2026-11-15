@@ -5,6 +5,7 @@ import fichaArroz from "../data/condiciones_arroz.json";
 import fichaFrijol from "../data/condiciones_frijol.json";
 import fichaCanaAzucar from "../data/condiciones_cana_azucar.json";
 import FormularioParcela from "./FormularioParcela.jsx";
+import EstacionalidadYAlertas from "./EstacionalidadYAlertas.jsx";
 
 function formatearLimite(condicion, valor) {
   return condicion.id === "ph" ? valor.toFixed(1) : valor;
@@ -355,6 +356,7 @@ function App() {
         )}
       </section>
 
+      <EstacionalidadYAlertas />
       <FormularioParcela cultivos={cultivosData.cultivos} />
     </main>
   );

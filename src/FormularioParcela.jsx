@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import formulario from "../data/formulario_parcela.json";
 import fichaMaiz from "../data/condiciones_maiz.json";
 import fichaArroz from "../data/condiciones_arroz.json";
@@ -6,7 +6,15 @@ import fichaCanaAzucar from "../data/condiciones_cana_azucar.json";
 import fichaFrijol from "../data/condiciones_frijol.json";
 import { compararCultivos } from "./compararCultivos.js";
 
+import { obtenerClimaNASA } from "./services/nasaApi.js";
+
 const STORAGE_KEY = "parcela_temporal_v1";
+const MESES = [
+  ["JAN", "Enero"], ["FEB", "Febrero"], ["MAR", "Marzo"],
+  ["APR", "Abril"], ["MAY", "Mayo"], ["JUN", "Junio"],
+  ["JUL", "Julio"], ["AUG", "Agosto"], ["SEP", "Septiembre"],
+  ["OCT", "Octubre"], ["NOV", "Noviembre"], ["DEC", "Diciembre"],
+];
 const fichasCultivos = [fichaMaiz, fichaArroz, fichaCanaAzucar, fichaFrijol];
 
 function crearDatosIniciales() {
@@ -16,6 +24,7 @@ function crearDatosIniciales() {
     tipo_suelo_id: null,
     temperatura_promedio_c: null,
     periodo_temperatura_id: null,
+    clima_nasa: null,
     abastecimiento_agua_id: null,
     sistemas_riego: [],
     cultivo_previo: null,
@@ -83,6 +92,22 @@ function esObjetoTemporalValido(valor) {
 
   if (!formatoValido) return false;
   if (
+    valor.clima_nasa != null &&
+    (typeof valor.clima_nasa !== "object" ||
+      !Number.isFinite(valor.clima_nasa.latitud) ||
+      valor.clima_nasa.latitud < -90 || valor.clima_nasa.latitud > 90 ||
+      !Number.isFinite(valor.clima_nasa.longitud) ||
+      valor.clima_nasa.longitud < -180 || valor.clima_nasa.longitud > 180 ||
+      !MESES.some(([id]) => id === valor.clima_nasa.mes) ||
+      typeof valor.clima_nasa.periodo !== "string" ||
+      !valor.clima_nasa.periodo ||
+      valor.periodo_temperatura_id !== "otro_periodo" ||
+      ["precipitacion_mm_dia", "humedad_porcentaje", "radiacion_mj_m2_dia", "precipitacion_anual_mm"]
+        .some((clave) => valor.clima_nasa[clave] != null &&
+          (!Number.isFinite(valor.clima_nasa[clave]) || valor.clima_nasa[clave] < 0)) ||
+      (valor.clima_nasa.humedad_porcentaje != null && valor.clima_nasa.humedad_porcentaje > 100))
+  ) return false;
+  if (
     valor.cultivo_previo === false &&
     (valor.numero_ciclos_previos !== 0 ||
       valor.historial_cultivos.length !== 0)
@@ -138,6 +163,7 @@ function ResultadoComparacion({ datos, cultivos, sistemasRiego }) {
 
   function obtenerDetalle(factor) {
     const mensajes = configuracion.mensajes;
+    if (factor.id.startsWith("clima_nasa_")) return factor.detalle;
     if (factor.id === "suelo") {
       if (!factor.referencia) {
         return mensajes.sin_referencia_estructurada;
@@ -183,6 +209,7 @@ function ResultadoComparacion({ datos, cultivos, sistemasRiego }) {
   }
 
   function obtenerValorReferencia(factor) {
+    if (factor.id.startsWith("clima_nasa_")) return factor.referencia_texto;
     if (factor.id === "rotacion") {
       return "Revisamos qué se sembró antes.";
     }
@@ -210,6 +237,9 @@ function ResultadoComparacion({ datos, cultivos, sistemasRiego }) {
   }
 
   function obtenerDatoUsuario(factor) {
+    if (factor.id.startsWith("clima_nasa_")) {
+      return factor.valor_usuario ?? configuracion.mensajes.no_informado;
+    }
     if (
       factor.id === "rotacion" &&
       factor.valor_usuario === "Sin historial informado"
@@ -344,7 +374,7 @@ function ResultadoComparacion({ datos, cultivos, sistemasRiego }) {
                         {obtenerDetalle(factor)}
                       </p>
                       <p className="comparacion-metadato">
-                        <strong>Lo que indicaste:</strong>{" "}
+                        <strong>{factor.id.startsWith("clima_nasa_") ? "NASA POWER:" : "Lo que indicaste:"}</strong>{" "}
                         {obtenerDatoUsuario(factor)}
                       </p>
                       <p className="comparacion-metadato">
@@ -399,6 +429,23 @@ function FormularioParcela({ cultivos }) {
   const [errorRestauracion, setErrorRestauracion] = useState("");
   const [errores, setErrores] = useState({});
   const [mensaje, setMensaje] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [ubicando, setUbicando] = useState(false);
+  const [mensajeUbicacion, setMensajeUbicacion] = useState("");
+  const [errorUbicacion, setErrorUbicacion] = useState("");
+  const solicitudUbicacion = useRef(0);
+  const [climaActual, setClimaActual] = useState(null);
+  const [modoClima, setModoClima] = useState("manual");
+  const [temperaturaManual, setTemperaturaManual] = useState(null);
+  const [latitud, setLatitud] = useState("");
+  const [longitud, setLongitud] = useState("");
+  const [mesClima, setMesClima] = useState("");
+  const [errorClima, setErrorClima] = useState("");
+  const ocupado = loading || ubicando;
+
+  useEffect(() => () => {
+    solicitudUbicacion.current += 1;
+  }, []);
 
   const cultivoIds = useMemo(
     () => new Set(cultivos.map((cultivo) => cultivo.id)),
@@ -544,6 +591,12 @@ function FormularioParcela({ cultivos }) {
             : "no",
       );
       setTemperaturaDesconocida(restaurados.temperatura_promedio_c === null);
+      if (restaurados.clima_nasa) {
+        setModoClima("nasa");
+        setLatitud(String(restaurados.clima_nasa.latitud));
+        setLongitud(String(restaurados.clima_nasa.longitud));
+        setMesClima(restaurados.clima_nasa.mes);
+      }
       setCiclosDesconocidos(
         restaurados.cultivo_previo === true &&
           restaurados.numero_ciclos_previos === null,
@@ -663,8 +716,155 @@ function FormularioParcela({ cultivos }) {
     return nuevosErrores;
   }
 
+  async function manejarConsultaClima() {
+    if (!mesClima) {
+      setErrorClima("Selecciona el mes que deseas consultar.");
+      return;
+    }
+    if (
+      latitud.trim() === "" || longitud.trim() === "" ||
+      !Number.isFinite(Number(latitud)) || Number(latitud) < -90 || Number(latitud) > 90 ||
+      !Number.isFinite(Number(longitud)) || Number(longitud) < -180 || Number(longitud) > 180
+    ) {
+      setErrorClima("Introduce una latitud entre -90 y 90 y una longitud entre -180 y 180.");
+      return;
+    }
+    setLoading(true);
+    setErrorClima("");
+    setClimaActual(null);
+
+    try {
+      const clima = await obtenerClimaNASA(Number(latitud), Number(longitud));
+      setClimaActual(clima);
+      aplicarClima(clima, mesClima);
+    } catch (error) {
+      console.error("No se pudo consultar NASA POWER:", error);
+      setErrorClima("No se pudo consultar NASA POWER. Puedes usar los datos anteriores si están disponibles o cambiar al modo manual.");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  function aplicarClima(clima, mes) {
+    const temperatura = clima.valorMensual("T2M", mes);
+    const precipitacionAnual = clima.valorMensual("PRECTOTCORR", "ANN");
+    actualizar({
+      temperatura_promedio_c: temperatura,
+      periodo_temperatura_id: "otro_periodo",
+      clima_nasa: {
+        latitud: clima.latitud,
+        longitud: clima.longitud,
+        mes,
+        periodo: clima.periodo,
+        precipitacion_mm_dia: clima.valorMensual("PRECTOTCORR", mes),
+        humedad_porcentaje: clima.valorMensual("RH2M", mes),
+        radiacion_mj_m2_dia: clima.valorMensual("ALLSKY_SFC_SW_DWN", mes),
+        precipitacion_anual_mm: precipitacionAnual === null
+          ? null
+          : precipitacionAnual * 365.25,
+      },
+    });
+  }
+
+  function cambiarModoClima(modo) {
+    setModoClima(modo);
+    setErrorClima("");
+    setMensajeUbicacion("");
+    setErrorUbicacion("");
+    if (modo === "nasa") {
+      setTemperaturaManual({
+        temperatura: borrador.temperatura_promedio_c,
+        periodo: borrador.periodo_temperatura_id,
+        desconocida: temperaturaDesconocida,
+      });
+      actualizar({ temperatura_promedio_c: null, periodo_temperatura_id: null, clima_nasa: null });
+      setClimaActual(null);
+    } else {
+      actualizar({
+        temperatura_promedio_c: temperaturaManual?.temperatura ?? null,
+        periodo_temperatura_id: temperaturaManual?.periodo ?? null,
+        clima_nasa: null,
+      });
+      setTemperaturaDesconocida(temperaturaManual?.desconocida ?? false);
+    }
+  }
+
+  function cambiarCoordenada(setter, valor) {
+    setter(valor);
+    setClimaActual(null);
+    setErrorClima("");
+    setMensajeUbicacion("");
+    setErrorUbicacion("");
+    actualizar({ temperatura_promedio_c: null, periodo_temperatura_id: null, clima_nasa: null });
+  }
+
+  function cancelarUbicacion() {
+    solicitudUbicacion.current += 1;
+    setUbicando(false);
+    setMensajeUbicacion("");
+    setErrorUbicacion("");
+  }
+
+  function usarUbicacionActual() {
+    setMensajeUbicacion("");
+    setErrorUbicacion("");
+    if (!window.isSecureContext || !navigator.geolocation) {
+      setErrorUbicacion(
+        "La ubicación no está disponible. Usa HTTPS o localhost y un navegador compatible, o introduce las coordenadas manualmente.",
+      );
+      return;
+    }
+
+    const solicitud = ++solicitudUbicacion.current;
+    setUbicando(true);
+    try {
+      navigator.geolocation.getCurrentPosition(
+        ({ coords }) => {
+          if (solicitud !== solicitudUbicacion.current) return;
+          setUbicando(false);
+          if (
+            !Number.isFinite(coords.latitude) || coords.latitude < -90 || coords.latitude > 90 ||
+            !Number.isFinite(coords.longitude) || coords.longitude < -180 || coords.longitude > 180
+          ) {
+            setErrorUbicacion("El dispositivo devolvió coordenadas inválidas. Inténtalo de nuevo o introdúcelas manualmente.");
+            return;
+          }
+          setLatitud(String(coords.latitude));
+          setLongitud(String(coords.longitude));
+          setClimaActual(null);
+          setErrorClima("");
+          actualizar({ temperatura_promedio_c: null, periodo_temperatura_id: null, clima_nasa: null });
+          const precision = Number.isFinite(coords.accuracy) && coords.accuracy >= 0
+            ? ` Precisión estimada: ${Math.ceil(coords.accuracy)} m.`
+            : "";
+          setMensajeUbicacion(`Ubicación obtenida.${precision} Verifica que corresponda a la parcela.`);
+        },
+        (error) => {
+          if (solicitud !== solicitudUbicacion.current) return;
+          setUbicando(false);
+          const mensajes = {
+            1: "Se denegó el permiso de ubicación. Habilítalo en el navegador o introduce las coordenadas manualmente.",
+            2: "No se pudo determinar la ubicación. Inténtalo de nuevo o introduce las coordenadas manualmente.",
+            3: "Se agotó el tiempo para obtener la ubicación. Inténtalo de nuevo o introduce las coordenadas manualmente.",
+          };
+          setErrorUbicacion(mensajes[error.code] ?? "No se pudo obtener la ubicación. Introduce las coordenadas manualmente.");
+        },
+        { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 },
+      );
+    } catch (error) {
+      console.error("No se pudo solicitar la ubicación:", error);
+      setUbicando(false);
+      setErrorUbicacion("No se pudo solicitar la ubicación. Introduce las coordenadas manualmente.");
+    }
+  }
+
   function guardar(evento) {
     evento.preventDefault();
+    if (ocupado) return;
+    if (modoClima === "nasa" && !borrador.clima_nasa) {
+      setErrorClima("Consulta NASA POWER o cambia a ingreso manual antes de guardar.");
+      return;
+    }
     if (!catalogosValidos) {
       setMensaje("No se pudieron validar los catálogos del formulario.");
       return;
@@ -699,6 +899,7 @@ function FormularioParcela({ cultivos }) {
   }
 
   function borrarDatos() {
+    cancelarUbicacion();
     let error = "";
     try {
       window.sessionStorage.removeItem(STORAGE_KEY);
@@ -715,6 +916,15 @@ function FormularioParcela({ cultivos }) {
     setTemperaturaDesconocida(false);
     setCiclosDesconocidos(false);
     setErrores({});
+    setClimaActual(null);
+    setModoClima("manual");
+    setTemperaturaManual(null);
+    setLatitud("");
+    setLongitud("");
+    setMesClima("");
+    setErrorClima("");
+    setMensajeUbicacion("");
+    setErrorUbicacion("");
     setMensaje(error ? "" : "Datos temporales borrados.");
     setErrorAlmacenamiento(error);
     setErrorRestauracion("");
@@ -814,7 +1024,7 @@ function FormularioParcela({ cultivos }) {
       {errorRestauracion && (
         <div className="form-notice form-notice--warning" role="alert">
           <p>{errorRestauracion}</p>
-          <button className="secondary-button" onClick={empezarDeNuevo} type="button">
+          <button className="secondary-button" disabled={ocupado} onClick={empezarDeNuevo} type="button">
             Empezar de nuevo
           </button>
         </div>
@@ -870,10 +1080,12 @@ function FormularioParcela({ cultivos }) {
             <div>
               <dt>Período del promedio</dt>
               <dd>
-                {obtenerEtiqueta(
-                  formulario.periodos_temperatura,
-                  datosGuardados.periodo_temperatura_id,
-                )}
+                {datosGuardados.clima_nasa
+                  ? `NASA POWER: ${MESES.find(([id]) => id === datosGuardados.clima_nasa.mes)[1]}; ${datosGuardados.clima_nasa.periodo} (${datosGuardados.clima_nasa.latitud}, ${datosGuardados.clima_nasa.longitud})`
+                  : obtenerEtiqueta(
+                      formulario.periodos_temperatura,
+                      datosGuardados.periodo_temperatura_id,
+                    )}
               </dd>
             </div>
             <div>
@@ -964,6 +1176,152 @@ function FormularioParcela({ cultivos }) {
 
       {(!datosGuardados || editando) && (
         <form className="parcela-form" onSubmit={guardar} noValidate>
+          <fieldset className={modoClima === "nasa" ? "parcela-clima" : undefined}>
+            <legend>Datos climáticos</legend>
+            <label className="check-control">
+              <input
+                checked={modoClima === "nasa"}
+                disabled={ocupado}
+                onChange={() => cambiarModoClima("nasa")}
+                type="radio"
+                name="modo-clima"
+              />
+              Consultar NASA POWER (con conexión)
+            </label>
+            <label className="check-control">
+              <input
+                checked={modoClima === "manual"}
+                disabled={ocupado}
+                onChange={() => cambiarModoClima("manual")}
+                type="radio"
+                name="modo-clima"
+              />
+              Introducir datos manualmente
+            </label>
+            {modoClima === "nasa" && (
+              <div className="nested-fields">
+                <p className="field-help">
+                  Introduce las coordenadas de la parcela y el mes. La consulta
+                  envía esas coordenadas a NASA POWER y usa promedios históricos,
+                  no clima actual ni pronóstico.
+                </p>
+                <p className="field-help" id="ayuda-ubicacion">
+                  Puedes usar la ubicación actual del dispositivo si estás en la
+                  parcela. Es aproximada y puede requerir permiso del navegador.
+                  También puedes escribir o corregir las coordenadas.
+                </p>
+                <button
+                  aria-describedby="ayuda-ubicacion"
+                  className="secondary-button"
+                  disabled={ocupado}
+                  onClick={usarUbicacionActual}
+                  type="button"
+                >
+                  {ubicando ? "Buscando ubicación…" : "Usar mi ubicación actual"}
+                </button>
+                {ubicando && (
+                  <button className="secondary-button" onClick={cancelarUbicacion} type="button">
+                    Cancelar búsqueda de ubicación
+                  </button>
+                )}
+                {mensajeUbicacion && <p className="field-help" role="status">{mensajeUbicacion}</p>}
+                {errorUbicacion && (
+                  <p className="form-notice form-notice--warning" role="alert">
+                    {errorUbicacion}
+                  </p>
+                )}
+                <div className="clima-coordenadas">
+                  <label className="field-control" htmlFor="latitud">
+                    <span>Latitud</span>
+                    <input
+                      disabled={ocupado}
+                      id="latitud"
+                      max="90"
+                      min="-90"
+                      onChange={(evento) => cambiarCoordenada(setLatitud, evento.target.value)}
+                      step="any"
+                      type="number"
+                      value={latitud}
+                    />
+                  </label>
+                  <label className="field-control" htmlFor="longitud">
+                    <span>Longitud</span>
+                    <input
+                      disabled={ocupado}
+                      id="longitud"
+                      max="180"
+                      min="-180"
+                      onChange={(evento) => cambiarCoordenada(setLongitud, evento.target.value)}
+                      step="any"
+                      type="number"
+                      value={longitud}
+                    />
+                  </label>
+                  <label className="field-control" htmlFor="mes-clima">
+                    <span>Mes del promedio histórico</span>
+                    <select
+                      disabled={ocupado}
+                      id="mes-clima"
+                      onChange={(evento) => {
+                        const mes = evento.target.value;
+                        setMesClima(mes);
+                        setErrorClima("");
+                        if (climaActual && mes) aplicarClima(climaActual, mes);
+                        else actualizar({ temperatura_promedio_c: null, periodo_temperatura_id: null, clima_nasa: null });
+                      }}
+                      value={mesClima}
+                    >
+                      <option value="">Selecciona un mes</option>
+                      {MESES.map(([id, nombre]) => (
+                        <option key={id} value={id}>{nombre}</option>
+                      ))}
+                    </select>
+                  </label>
+                </div>
+                <button
+                  className="secondary-button clima-consultar"
+                  disabled={ocupado}
+                  onClick={manejarConsultaClima}
+                  type="button"
+                >
+                  {loading ? "Consultando NASA POWER…" : "Consultar NASA POWER"}
+                </button>
+                {errorClima && (
+                  <p className="form-notice form-notice--warning" role="alert">
+                    {errorClima}
+                  </p>
+                )}
+                {borrador.clima_nasa && (
+                  <>
+                    <p className="field-help">
+                      Fuente: NASA POWER; {borrador.clima_nasa.periodo}.
+                      Coordenadas: {borrador.clima_nasa.latitud}, {borrador.clima_nasa.longitud}.
+                      Estos datos se aplican automáticamente a la comparación cuando son evaluables.
+                    </p>
+                    <dl className="resumen-lista">
+                      {[
+                        ["Temperatura", borrador.temperatura_promedio_c, "°C"],
+                        ["Precipitación", borrador.clima_nasa.precipitacion_mm_dia, "mm/día"],
+                        ["Humedad relativa", borrador.clima_nasa.humedad_porcentaje, "%"],
+                        ["Radiación solar", borrador.clima_nasa.radiacion_mj_m2_dia, "MJ/m²/día"],
+                        ["Precipitación anual estimada", borrador.clima_nasa.precipitacion_anual_mm, "mm/año"],
+                      ].map(([nombre, valor, unidad]) => (
+                        <div key={nombre}>
+                          <dt>{nombre}</dt>
+                          <dd>{valor == null ? "Sin datos" : `${Number(valor.toFixed(2))} ${unidad}`}</dd>
+                        </div>
+                      ))}
+                    </dl>
+                    <p className="field-help">
+                      La precipitación anual estimada se calcula con el promedio diario anual
+                      de NASA multiplicado por 365,25; no incluye agua de riego.
+                    </p>
+                  </>
+                )}
+              </div>
+            )}
+          </fieldset>
+
           <fieldset>
             <legend>{formulario.etiquetas.cultivo_deseado}</legend>
             <label className="field-control" htmlFor="cultivo-deseado">
@@ -1028,6 +1386,7 @@ function FormularioParcela({ cultivos }) {
             <CampoError id="tipo-suelo" mensaje={errores.tipo_suelo} />
           </fieldset>
 
+          {modoClima === "manual" && (
           <fieldset>
             <legend>{formulario.etiquetas.temperatura}</legend>
             <label className="field-control" htmlFor="temperatura">
@@ -1043,6 +1402,7 @@ function FormularioParcela({ cultivos }) {
                 inputMode="decimal"
                 onChange={(evento) =>
                   actualizar({
+                    clima_nasa: null,
                     temperatura_promedio_c:
                       evento.target.value === ""
                         ? null
@@ -1067,6 +1427,7 @@ function FormularioParcela({ cultivos }) {
                   setTemperaturaDesconocida(evento.target.checked);
                   if (evento.target.checked) {
                     actualizar({
+                      clima_nasa: null,
                       temperatura_promedio_c: null,
                       periodo_temperatura_id: null,
                     });
@@ -1078,7 +1439,9 @@ function FormularioParcela({ cultivos }) {
             </label>
             <CampoError id="temperatura" mensaje={errores.temperatura} />
           </fieldset>
+          )}
 
+          {modoClima === "manual" && (
           <fieldset>
             <legend>{formulario.etiquetas.periodo_temperatura}</legend>
             <label className="field-control" htmlFor="periodo-temperatura">
@@ -1094,6 +1457,7 @@ function FormularioParcela({ cultivos }) {
                 id="periodo-temperatura"
                 onChange={(evento) =>
                   actualizar({
+                    clima_nasa: null,
                     periodo_temperatura_id: evento.target.value || null,
                   })
                 }
@@ -1112,6 +1476,7 @@ function FormularioParcela({ cultivos }) {
               mensaje={errores.periodo_temperatura}
             />
           </fieldset>
+          )}
 
           <fieldset>
             <legend>{formulario.etiquetas.abastecimiento_agua}</legend>
@@ -1333,12 +1698,13 @@ function FormularioParcela({ cultivos }) {
           )}
 
           <div className="form-actions">
-            <button className="primary-button" type="submit">
+            <button className="primary-button" disabled={ocupado} type="submit">
               Guardar datos temporalmente
             </button>
             {datosGuardados && (
               <button
                 className="secondary-button"
+                disabled={ocupado}
                 onClick={borrarDatos}
                 type="button"
               >

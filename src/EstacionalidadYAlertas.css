@@ -1,0 +1,163 @@
+.estacionalidad {
+  margin: 40px 0;
+  padding: clamp(20px, 4vw, 32px);
+  border: 1px solid #dbe3da;
+  border-radius: 18px;
+  background: #fff;
+}
+
+.estacionalidad header h2 {
+  margin-bottom: 8px;
+  font-family: Georgia, serif;
+  font-size: 1.65rem;
+  font-weight: 400;
+}
+
+.estacionalidad header > p:last-child,
+.estacionalidad-nota,
+.estacionalidad-fuente {
+  color: #52625a;
+  line-height: 1.5;
+}
+
+.estacionalidad .eyebrow {
+  margin-bottom: 10px;
+}
+
+.estacionalidad-selectores {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 16px;
+  margin: 24px 0 12px;
+}
+
+.estacionalidad-selectores label {
+  display: grid;
+  gap: 7px;
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.estacionalidad-selectores select {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #aebfb4;
+  border-radius: 8px;
+  background: #fff;
+  color: #23332d;
+  font: inherit;
+  font-weight: 400;
+}
+
+.estacionalidad-nota,
+.estacionalidad-fuente {
+  font-size: 0.85rem;
+}
+
+.estacionalidad-aviso {
+  color: #83470b;
+  line-height: 1.5;
+}
+
+.estacionalidad-chart-scroll {
+  overflow-x: auto;
+}
+
+.estacionalidad-chart {
+  min-width: 500px;
+}
+
+.estacionalidad-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 24px;
+  margin: 20px 0 4px;
+  font-size: 0.82rem;
+}
+
+.estacionalidad-legend i {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  margin-right: 4px;
+  border-radius: 3px;
+}
+
+.estacionalidad-key-lluvia {
+  background: #92c4cd;
+}
+
+.estacionalidad-key-temp {
+  background: #b25837;
+}
+
+.estacionalidad-chart svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.estacionalidad-months {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+}
+
+.estacionalidad-months button {
+  min-height: 40px;
+  padding: 4px 0;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: #52625a;
+  font: inherit;
+  font-size: 0.76rem;
+  cursor: pointer;
+}
+
+.estacionalidad-months button[aria-pressed="true"] {
+  background: #dceef0;
+  color: #164c5a;
+  font-weight: 700;
+}
+
+.estacionalidad-months button:focus-visible,
+.estacionalidad-selectores select:focus-visible {
+  outline: 3px solid #2b6f83;
+  outline-offset: 2px;
+}
+
+.estacionalidad-detalle {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 20px;
+  margin: 18px 0;
+  line-height: 1.5;
+}
+
+.estacionalidad-alerta {
+  padding: 16px 18px;
+  border-left: 4px solid #74877b;
+  border-radius: 8px;
+  background: #eff3f0;
+  line-height: 1.5;
+}
+
+.estacionalidad-alerta p {
+  margin: 5px 0 0;
+}
+
+.estacionalidad-alerta--roja {
+  border-color: #b63a32;
+  background: #fff0ed;
+}
+
+.estacionalidad-alerta--amarilla,
+.estacionalidad-alerta--temperatura {
+  border-color: #b47a0a;
+  background: #fff7df;
+}
+
+.estacionalidad-alerta--verde {
+  border-color: #398054;
+  background: #eaf5ed;
+}

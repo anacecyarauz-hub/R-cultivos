@@ -289,7 +289,63 @@ function obtenerReferenciaAgua(ficha, abastecimientoAguaId) {
   };
 }
 
-function calcularCompatibilidad(ficha, factoresTemp, factorSuelo, factorRotacion, factorAgua) {
+function obtenerFactoresNASA(ficha, clima) {
+  if (!clima) return [];
+
+  const precipitacion = ficha.condiciones.find((condicion) => condicion.id === "precipitacion");
+  const anual = clima.precipitacion_anual_mm;
+  const mensual = clima.precipitacion_mm_dia;
+  const comparable = ficha.cultivo_id === "cana_azucar" &&
+    precipitacion?.unidad === "mm" && precipitacion.periodo === "Un año" &&
+    Number.isFinite(precipitacion.minimo) && Number.isFinite(precipitacion.maximo);
+  const tieneAnual = Number.isFinite(anual);
+  const dentro = comparable && tieneAnual &&
+    anual >= precipitacion.minimo && anual <= precipitacion.maximo;
+  const radiacion = ficha.factores_climaticos?.find((factor) => factor.id === "radiacion_solar");
+  const formatear = (valor, unidad) =>
+    Number.isFinite(valor) ? `${Number(valor.toFixed(2))} ${unidad}` : "Sin datos";
+
+  return [
+    {
+      id: "clima_nasa_precipitacion",
+      nombre: "Precipitación histórica",
+      valor_usuario: `${formatear(mensual, "mm/día (mes elegido)")}; ${formatear(anual, "mm/año estimados")}`,
+      referencia_texto: precipitacion
+        ? `${precipitacion.minimo}–${precipitacion.maximo} ${precipitacion.unidad} durante ${precipitacion.periodo}.`
+        : "No hay una referencia numérica comparable en esta ficha.",
+      fuente_id: precipitacion?.fuente_id,
+      resultado: comparable && tieneAnual
+        ? (dentro ? "dentro" : "fuera")
+        : !tieneAnual && !Number.isFinite(mensual) ? "sin_informacion" : "requiere_contexto",
+      detalle: comparable
+        ? tieneAnual
+          ? `La precipitación anual estimada ${dentro ? "está dentro" : "está fuera"} del rango de referencia. Se incorpora al puntaje con un peso de 20 puntos; no incluye riego ni indica cómo se distribuye la lluvia.`
+          : "Falta el promedio anual de NASA, por lo que la precipitación no se incluye en el puntaje."
+        : precipitacion
+          ? "La referencia corresponde al ciclo completo, no a un mes ni a un año; no se incluye en el puntaje."
+          : "No hay una referencia numérica comparable; no se incluye en el puntaje.",
+    },
+    {
+      id: "clima_nasa_humedad",
+      nombre: "Humedad relativa histórica",
+      valor_usuario: formatear(clima.humedad_porcentaje, "%"),
+      referencia_texto: "No hay un rango numérico comparable en esta ficha.",
+      resultado: Number.isFinite(clima.humedad_porcentaje) ? "requiere_contexto" : "sin_informacion",
+      detalle: "No se incluye en el puntaje porque falta una referencia comparable.",
+    },
+    {
+      id: "clima_nasa_radiacion",
+      nombre: "Radiación solar histórica",
+      valor_usuario: formatear(clima.radiacion_mj_m2_dia, "MJ/m²/día"),
+      referencia_texto: radiacion?.descripcion ?? "No hay un rango numérico comparable en esta ficha.",
+      fuente_id: radiacion?.fuente_id,
+      resultado: Number.isFinite(clima.radiacion_mj_m2_dia) ? "requiere_contexto" : "sin_informacion",
+      detalle: "No se incluye en el puntaje porque falta un rango numérico comparable.",
+    },
+  ];
+}
+
+function calcularCompatibilidad(ficha, factoresTemp, factorSuelo, factorRotacion, factorAgua, factoresNASA) {
   let puntos = 0;
   let puntosPosibles = 0;
   const fortalezas = [];
@@ -352,6 +408,17 @@ function calcularCompatibilidad(ficha, factoresTemp, factorSuelo, factorRotacion
     }
   }
 
+  const precipitacion = factoresNASA.find((factor) => factor.id === "clima_nasa_precipitacion");
+  if (precipitacion && ["dentro", "fuera"].includes(precipitacion.resultado)) {
+    puntosPosibles += 20;
+    if (precipitacion.resultado === "dentro") {
+      puntos += 20;
+      fortalezas.push("la precipitación anual histórica coincide con la referencia");
+    } else {
+      debilidades.push("la precipitación anual histórica queda fuera de la referencia");
+    }
+  }
+
   const porcentajeCalculado =
     puntosPosibles > 0 ? Math.round((puntos / puntosPosibles) * 100) : 0;
   const penalizacionCritica = factorRotacion.penalizacion_critica === true;
@@ -394,9 +461,11 @@ export function compararCultivos(
   const valorTemperatura = Number.isFinite(datos.temperatura_promedio_c)
     ? { valor: datos.temperatura_promedio_c }
     : null;
-  const periodo = periodosTemperatura.find(
-    (opcion) => opcion.id === datos.periodo_temperatura_id,
-  )?.nombre;
+  const periodo = datos.clima_nasa
+    ? `NASA POWER (${datos.clima_nasa.mes}): ${datos.clima_nasa.periodo}`
+    : periodosTemperatura.find(
+        (opcion) => opcion.id === datos.periodo_temperatura_id,
+      )?.nombre;
 
   const evaluaciones = fichas.map((ficha) => {
     const factoresTemp = obtenerReferenciasTemperatura(
@@ -407,6 +476,7 @@ export function compararCultivos(
     const factorSuelo = obtenerReferenciaSuelo(ficha, suelo, opcionSuelo);
     const factorRotacion = obtenerReferenciaRotacion(ficha, datos.historial_cultivos);
     const factorAgua = obtenerReferenciaAgua(ficha, datos.abastecimiento_agua_id);
+    const factoresNASA = obtenerFactoresNASA(ficha, datos.clima_nasa);
 
     const { porcentaje, explicacion } = calcularCompatibilidad(
       ficha,
@@ -414,6 +484,7 @@ export function compararCultivos(
       factorSuelo,
       factorRotacion,
       factorAgua,
+      factoresNASA,
     );
 
     return {
@@ -426,6 +497,7 @@ export function compararCultivos(
         factorSuelo,
         factorRotacion,
         factorAgua,
+        ...factoresNASA,
       ],
     };
   });
